@@ -1,5 +1,3 @@
-# filters.py
-
 import django_filters
 from apps.transaction.models import Transaction
 

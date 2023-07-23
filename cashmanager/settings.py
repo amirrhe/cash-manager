@@ -163,3 +163,4 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
     'AUTH_TOKEN_COOKIE': None,
 }
+TEST_DISCOVER_PATTERN = 'test*.py'

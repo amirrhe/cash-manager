@@ -5,6 +5,7 @@ from rest_framework.generics import (
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.transaction.api.serializer import (
@@ -25,6 +26,8 @@ class TransactionCreateView(CreateAPIView):
     def perform_create(self, serializer):
         with transaction.atomic():
             transaction_instance = serializer.save(user=self.request.user)
+            if transaction_instance.transaction_type == 'expense' and self.request.user.balance < transaction_instance.amount:
+                raise ValidationError("Insufficient balance.")
             transaction_instance.update_user_balance()
 
 
