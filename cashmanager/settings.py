@@ -13,15 +13,19 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
+
+from django.core.management.utils import get_random_secret_key
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
+SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--v*oznt$e4_vp^8vbuu@rg1+-7g%*=6*6v5oc^b7*v#p!g25ja'
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,7 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'apps.transaction.apps.TransactionConfig',
     'apps.users.apps.UsersConfig',
-    'drf_yasg',
+    # 'cashmanager',
 ]
 
 MIDDLEWARE = [
@@ -79,11 +83,11 @@ WSGI_APPLICATION = 'cashmanager.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 # Read database credentials from environment variables
-DB_NAME = os.getenv('DB_NAME')
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_HOST = os.getenv('DB_HOST')
-DB_PORT = os.getenv('DB_PORT')
+DB_NAME = os.getenv('DB_NAME', 'cash-manager')
+DB_USER = os.getenv('DB_USER', 'user')
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'postgres')
+DB_HOST = os.getenv('DB_HOST', 'db')
+DB_PORT = os.getenv('DB_PORT', '5432')
 
 DATABASES = {
     'default': {
@@ -163,4 +167,3 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
     'AUTH_TOKEN_COOKIE': None,
 }
-TEST_DISCOVER_PATTERN = 'test*.py'

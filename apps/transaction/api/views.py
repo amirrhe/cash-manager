@@ -24,11 +24,10 @@ class TransactionCreateView(CreateAPIView):
 
     @transaction.atomic
     def perform_create(self, serializer):
-        with transaction.atomic():
-            transaction_instance = serializer.save(user=self.request.user)
-            if transaction_instance.transaction_type == 'expense' and self.request.user.balance < transaction_instance.amount:
-                raise ValidationError("Insufficient balance.")
-            transaction_instance.update_user_balance()
+        transaction_instance = serializer.save(user=self.request.user)
+        if transaction_instance.transaction_type == 'expense' and self.request.user.balance < transaction_instance.amount:  # noqa
+            raise ValidationError("Insufficient balance.")
+        transaction_instance.update_user_balance()
 
 
 class TransactionListView(ListAPIView):
