@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework import status
+
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.transaction.api.serializer import (
@@ -63,19 +65,18 @@ class TransactionDeleteView(DestroyAPIView):
     def get_queryset(self):
         return Transaction.objects.filter(user=self.request.user)
 
-    # comment this line beacuse i dont know should balance decrease or increase when transaction deleted
-    # @transaction.atomic
-    # def perform_destroy(self, instance):
-    #     if instance.transaction_type == 'income':
-    #         self.request.user.balance -= instance.amount
-    #     elif instance.transaction_type == 'expense':
-    #         self.request.user.balance += instance.amount
+    @transaction.atomic
+    def perform_destroy(self, instance):
+        if instance.transaction_type == 'income':
+            self.request.user.balance -= instance.amount
+        elif instance.transaction_type == 'expense':
+            self.request.user.balance += instance.amount
 
-    #     self.request.user.save()
+        self.request.user.save()
 
-    #     instance.delete()
+        instance.delete()
 
-    #     return Response({"detail": "Transaction deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail": "Transaction deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 
 
 class MonthlySummaryReportView(APIView):

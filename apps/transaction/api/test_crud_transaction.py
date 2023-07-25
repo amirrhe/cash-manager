@@ -1,4 +1,3 @@
-from unittest import skip
 from rest_framework.reverse import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -338,6 +337,8 @@ class TransactionDeleteViewTestCase(APITestCase):
             transaction_type='income',
             category='Salary'
         )
+        self.user.balance += 100
+        self.user.save()
         self.login_url = reverse('login')
         self.transaction_delete_url = reverse('transaction_delete', kwargs={'pk': self.transaction.id})
 
@@ -392,7 +393,6 @@ class TransactionDeleteViewTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @skip('skip beacuse i dont know this is needed or not')
     def test_delete_transaction_and_adjust_balance(self):
         access_token = self.get_access_token()
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
